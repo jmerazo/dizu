@@ -1,16 +1,18 @@
-const { Router } = require('express');
-const passport = require('passport');
-const authRouter = Router();
-const isLoggedIn = require('../middlewares/authMiddleware');
+const express = require('express');
+var router = express.Router();
+const passport = require('../controllers/auth')
 
-authRouter.get('/', (req, res) => {
-    res.render('index', {successMessage: req.flash('Success'), errorMessage: req.flash('Error')});
-});
-
-authRouter.post('/signup', passport.authenticate('local', {
-    successRedirect: '/dashboard',
-    failureRedirect: '/signup',
-    failureFlash: true
+router.post('/login', passport.authenticate('local', {
+  successReturnToOrRedirect: '/dashboard',
+  failureRedirect: '/',
+  failureMessage: 'Usuario o contraseña incorrecta'
 }));
 
-module.exports = authRouter;
+router.post('/logout', function(req, res, next){
+  req.logout(function(err) {
+    if (err) { return next(err); }
+    res.redirect('/', { csrfToken: req.csrfToken() });
+  });
+});
+
+module.exports = router;

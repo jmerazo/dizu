@@ -10,33 +10,35 @@ const db = mysql.createPool({
     port: process.env.DB_PORT
   });
 
-passport.use(new LocalStrategy(async (login, pass, done) => {
-    console.log('user: ', login, " pass: ", pass)
+passport.use(new LocalStrategy(async (email, password, done) => {
+    debug('passport: ', email);
+    console.log('user: ', email, " pass: ", password)
     try {
-        const [rows] = await db.query('SELECT * FROM seg_usuarios WHERE login = ? LIMIT 1', [login]);
+        const [rows] = await db.query('SELECT * FROM auth WHERE email = ? LIMIT 1', [email]);
 
         if(rows.length === 0){
             return done(null, false, { message: 'Usuario no encontrado.' });
         }
 
         const user = rows[0];
-        if(user.pass !== pass){
+        if(user.password !== password){
             return done(null, false, { message: 'Contraseña incorrecta.' });
         }
-
+        console.log('estoy aqui', user)
         return done(null, user);
     }catch (error) {
+        console.log('error: ', error)
         return done(error);   
     }
 }));
 
 passport.serializeUser((user, done) => {
-    done(null, user.cod_user);
+    done(null, user.id);
 });
 
-passport.deserializeUser(async (cod_user, done) => {
+passport.deserializeUser(async (id, done) => {
     try {
-        const [rows] = await db.query('SELECT * FROM seg_usuarios WHERE cod_user = ?', [cod_user]);
+        const [rows] = await db.query('SELECT * FROM auth WHERE id = ?', [id]);
     
         if (rows.length === 0) {
           return done(null, false);

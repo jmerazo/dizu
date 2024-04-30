@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+</head>
+<body>
+    <h1>Error</h1>
+    <h2><%= message %></h2>
+    <% if (error.stack) { %>
+        <h3>Details:</h3>
+        <pre><%= error.stack %></pre>
+    <% } else { %>
+        <p>No additional information is available.</p>
+    <% } %>
+</body>
+</html>
