@@ -22,10 +22,12 @@ const sessionStore = new MySQLStore({
 
 const app = express();
 const port = process.env.PORT || 3350;
-app.use(helmet.contentSecurityPolicy({
-  directives: {
-      "default-src": ["'self'"],
-      "script-src": ["'self'", "https://cdn.jsdelivr.net"]
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],  // Definiciones predeterminadas para fuentes de contenido
+      scriptSrc: ["'self'", "https://cdn.jsdelivr.net", "'unsafe-inline'"],  // Permite scripts de 'self' y del CDN
+    }
   }
 }));
 app.use(session({
@@ -43,7 +45,6 @@ app.locals.pluralize = require('pluralize');
 app.use(flash());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));// Middleware para analizar datos de formularios
-app.use(helmet());
 app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
@@ -65,6 +66,7 @@ app.use(function(req, res, next) {
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.static('public'));
 
 const api = require('./routes/api');
 const auth = require('./routes/auth');

@@ -13,5 +13,6 @@ router.get('/', cors(corsOptions), (req, res) =>
 
 router.post('/signup', userController.addUserController)
 router.get('/report/documentxdependencies', reportsController.reportDocsController)
+router.get('/report/docsxdepxfilter', reportsController.reportDocsFilterController)
 
 module.exports = router;
